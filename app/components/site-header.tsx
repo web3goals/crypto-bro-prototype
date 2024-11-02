@@ -41,7 +41,7 @@ export function SiteHeader() {
             <DropdownMenuContent>
               <Link href={siteConfig.links.github} target="_blank">
                 <DropdownMenuItem>
-                  <GithubIcon className="mr-2 h-4 w-4" />
+                  <GithubIcon className="size-4 mr-2" />
                   <span>GitHub</span>
                 </DropdownMenuItem>
               </Link>
