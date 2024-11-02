@@ -16,7 +16,9 @@ export function SiteHeader() {
         {/* Left part */}
         <div className="flex gap-6 md:gap-10">
           <Link href="/" className="flex items-center space-x-2">
-            <BicepsFlexedIcon className="text-primary size-7" />
+            <div className="flex items-center justify-center size-8 bg-primary rounded-full">
+              <BicepsFlexedIcon className="text-primary-foreground size-4" />
+            </div>
             <span className="hidden text-primary font-bold md:inline">
               {siteConfig.name}
             </span>
