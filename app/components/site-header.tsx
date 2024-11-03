@@ -1,6 +1,12 @@
 import { siteConfig } from "@/config/site";
-import { BicepsFlexedIcon, GithubIcon, MenuIcon } from "lucide-react";
+import {
+  BicepsFlexedIcon,
+  GithubIcon,
+  MenuIcon,
+  MessagesSquareIcon,
+} from "lucide-react";
 import Link from "next/link";
+import { SiteHeaderConnectButton } from "./site-header-connect-button";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
@@ -26,9 +32,7 @@ export function SiteHeader() {
         </div>
         {/* Right part */}
         <div className="flex flex-1 items-center justify-end gap-4">
-          <Link href="/chat">
-            <Button variant="default">Talk to Crypto Bro</Button>
-          </Link>
+          <SiteHeaderConnectButton />
           <DropdownMenu>
             <DropdownMenuTrigger
               className="text-sm font-medium text-muted-foreground"
@@ -39,6 +43,12 @@ export function SiteHeader() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
+              <Link href="/chat" target="_blank">
+                <DropdownMenuItem>
+                  <MessagesSquareIcon className="size-4 mr-2" />
+                  <span>Talking to Crypto Bro</span>
+                </DropdownMenuItem>
+              </Link>
               <Link href={siteConfig.links.github} target="_blank">
                 <DropdownMenuItem>
                   <GithubIcon className="size-4 mr-2" />
