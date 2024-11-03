@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
 import { processMessages } from "@/lib/actions";
+import { OPEN_AI_PROMPT } from "@/lib/openai";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Loader2Icon,
@@ -28,7 +29,10 @@ export default function ChatPage() {
   const [isProsessing, setIsProsessing] = useState(false);
   const [messages, setMessages] = useState<
     OpenAI.Chat.ChatCompletionMessageParam[]
-  >([]);
+  >([
+    { role: "system", content: OPEN_AI_PROMPT },
+    { role: "assistant", content: "GM, crypto bro! What can I help with?" },
+  ]);
 
   const formSchema = z.object({
     message: z.string().min(1, { message: "Message cannot be empty" }),
