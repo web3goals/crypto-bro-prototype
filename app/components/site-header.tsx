@@ -43,7 +43,7 @@ export function SiteHeader() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <Link href="/chat" target="_blank">
+              <Link href="/chat">
                 <DropdownMenuItem>
                   <MessagesSquareIcon className="size-4 mr-2" />
                   <span>Talking to Crypto Bro</span>
