@@ -43,8 +43,8 @@ export default function ChatPage() {
     try {
       setIsProsessing(true);
       // Check wallet client account
-      const account = primaryWallet.getWalletClient().account;
-      if (!account) {
+      const walletClient = primaryWallet.getWalletClient();
+      if (!walletClient) {
         toast({ title: "Please login to send messages" });
         return;
       }
@@ -55,7 +55,7 @@ export default function ChatPage() {
       ];
       setMessages(newMessages);
       // Process messages
-      newMessages = await processOpenAiMessages(newMessages);
+      newMessages = await processOpenAiMessages(newMessages, walletClient);
       setMessages(newMessages);
     } catch (error) {
       handleError(error, "Failed to send the message, try again later");
