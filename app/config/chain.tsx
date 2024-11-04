@@ -13,6 +13,6 @@ export const chainConfig = {
     },
   } as Chain,
   contracts: {
-    cryptoBro: "0x679933EdbbC8861171ccA4829C1B926433c549f0" as Address,
+    cryptoBro: "0xee1a32fb1e7963756ccd4416f9e8c564fca9b0b1" as Address,
   },
 };

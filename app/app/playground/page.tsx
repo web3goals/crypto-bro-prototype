@@ -149,7 +149,7 @@ function PlaygroundDeployErc20TokenFeature() {
       });
       const deployErc20FunctionData = encodeFunctionData({
         abi: cryptoBroAbi,
-        functionName: "deployCustomErc20",
+        functionName: "deployErc20",
         args: ["Crypto Bro Token", "CBT", parseEther("1000")],
       });
       const deployErc20Tx = rawTx({

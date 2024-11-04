@@ -6,6 +6,6 @@ export const CONTRACTS: {
   };
 } = {
   sepolia: {
-    cryptoBro: "0x679933edbbc8861171cca4829c1b926433c549f0",
+    cryptoBro: "0xee1a32fb1e7963756ccd4416f9e8c564fca9b0b1",
   },
 };

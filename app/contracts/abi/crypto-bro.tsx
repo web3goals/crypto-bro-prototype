@@ -17,7 +17,7 @@ export const cryptoBroAbi = [
         type: "uint256",
       },
     ],
-    name: "deployCustomErc20",
+    name: "deployErc20",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -35,11 +35,11 @@ export const cryptoBroAbi = [
         type: "uint256",
       },
     ],
-    name: "deployedCustomErc20List",
+    name: "deployedErc20s",
     outputs: [
       {
         internalType: "contract CustomErc20",
-        name: "customErc20List",
+        name: "erc20s",
         type: "address",
       },
     ],
@@ -54,7 +54,7 @@ export const cryptoBroAbi = [
         type: "address",
       },
     ],
-    name: "getDeployedCustomErc20List",
+    name: "getDeployedErc20s",
     outputs: [
       {
         internalType: "contract CustomErc20[]",
