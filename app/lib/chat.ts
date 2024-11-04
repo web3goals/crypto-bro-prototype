@@ -1,9 +1,9 @@
 import { chainConfig } from "@/config/chain";
-import { initKlaster, klasterNodeHost, loadBicoV2Account } from "klaster-sdk";
 import OpenAI from "openai";
-import { WalletClient } from "viem";
+import { createPublicClient, WalletClient } from "viem";
 import { getOpenAiResponse } from "./actions";
 import { errorToString } from "./converters";
+import { getKlasterAccountAddress } from "./klaster";
 
 export async function processOpenAiMessages(
   inputMessages: OpenAI.Chat.ChatCompletionMessageParam[],
@@ -49,8 +49,8 @@ async function processOpenAiToolCalls(
         tool_call_id: toolCall.id,
       });
     }
-    if (toolCall.function.name === "get_wallet_balance") {
-      const toolResponse = await getWalletBalance();
+    if (toolCall.function.name === "get_wallet_eth_balance") {
+      const toolResponse = await getWalletEthBalance(walletClient);
       messages.push({
         role: "tool",
         content: toolResponse,
@@ -63,19 +63,10 @@ async function processOpenAiToolCalls(
 
 async function getWalletAddress(walletClient: WalletClient): Promise<string> {
   try {
-    if (!walletClient.account) {
-      throw new Error("Wallet client account not defined");
-    }
-    const klaster = await initKlaster({
-      accountInitData: loadBicoV2Account({
-        owner: walletClient.account.address,
-      }),
-      nodeUrl: klasterNodeHost.default,
-    });
-    const address = klaster.account.getAddress(chainConfig.chain.id);
-    if (!address) {
-      throw new Error("Klaster address not defined");
-    }
+    const address = await getKlasterAccountAddress(
+      walletClient,
+      chainConfig.chain
+    );
     return `${address} (${chainConfig.chain.name})`;
   } catch (error) {
     console.error("Failed to get wallet address: ", errorToString(error));
@@ -83,6 +74,24 @@ async function getWalletAddress(walletClient: WalletClient): Promise<string> {
   }
 }
 
-async function getWalletBalance(): Promise<string> {
-  return "0.42 ETH";
+async function getWalletEthBalance(
+  walletClient: WalletClient
+): Promise<string> {
+  try {
+    const client = createPublicClient({
+      chain: chainConfig.chain,
+      transport: chainConfig.transport,
+    });
+    const address = await getKlasterAccountAddress(
+      walletClient,
+      chainConfig.chain
+    );
+    const balance = await client.getBalance({
+      address: address,
+    });
+    return `${balance.toString()} ETH (${chainConfig.chain.name})`;
+  } catch (error) {
+    console.error("Failed to get wallet address: ", errorToString(error));
+    return "Failed to get wallet address";
+  }
 }
