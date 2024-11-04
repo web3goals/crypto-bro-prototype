@@ -1,21 +1,33 @@
+"use client";
+
 import { siteConfig } from "@/config/site";
+import {
+  useAccount,
+  useDisconnect,
+  useModal,
+} from "@particle-network/connectkit";
 import {
   BicepsFlexedIcon,
   GithubIcon,
+  LogOutIcon,
   MenuIcon,
   MessagesSquareIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { SiteHeaderConnectButton } from "./site-header-connect-button";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
 export function SiteHeader() {
+  const { isDisconnected } = useAccount();
+  const { setOpen } = useModal();
+  const { disconnect } = useDisconnect();
+
   return (
     <header className="sticky top-0 z-40 bg-card border-b">
       <div className="container flex h-16 items-center space-x-4 sm:justify-between sm:space-x-0">
@@ -32,7 +44,13 @@ export function SiteHeader() {
         </div>
         {/* Right part */}
         <div className="flex flex-1 items-center justify-end gap-4">
-          <SiteHeaderConnectButton />
+          {isDisconnected ? (
+            <Button onClick={() => setOpen(true)}>Login</Button>
+          ) : (
+            <Link href="/chat">
+              <Button>Talk to Crypto Bro</Button>
+            </Link>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger
               className="text-sm font-medium text-muted-foreground"
@@ -46,7 +64,7 @@ export function SiteHeader() {
               <Link href="/chat">
                 <DropdownMenuItem>
                   <MessagesSquareIcon className="size-4 mr-2" />
-                  <span>Talking to Crypto Bro</span>
+                  <span>Chat</span>
                 </DropdownMenuItem>
               </Link>
               <Link href={siteConfig.links.github} target="_blank">
@@ -55,6 +73,11 @@ export function SiteHeader() {
                   <span>GitHub</span>
                 </DropdownMenuItem>
               </Link>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={() => disconnect()}>
+                <LogOutIcon className="size-4 mr-2" />
+                <span>Logout</span>
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
