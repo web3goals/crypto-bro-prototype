@@ -1,6 +1,6 @@
 import { chainConfig } from "@/config/chain";
 import OpenAI from "openai";
-import { createPublicClient, WalletClient } from "viem";
+import { createPublicClient, http, WalletClient } from "viem";
 import { getOpenAiResponse } from "./actions";
 import { errorToString } from "./converters";
 import { getKlasterAccountAddress } from "./klaster";
@@ -80,7 +80,7 @@ async function getWalletEthBalance(
   try {
     const client = createPublicClient({
       chain: chainConfig.chain,
-      transport: chainConfig.transport,
+      transport: http(chainConfig.chain.rpcUrls.default.http[0]),
     });
     const address = await getKlasterAccountAddress(
       walletClient,
