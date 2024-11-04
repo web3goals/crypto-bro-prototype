@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
 import { toast } from "@/hooks/use-toast";
-import { processMessages } from "@/lib/actions";
+import { processOpenAiMessages } from "@/lib/chat";
 import { OPEN_AI_PROMPT } from "@/lib/openai";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,17 +49,14 @@ export default function ChatPage() {
         return;
       }
       // Add user's message to messages state
-      const newMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
+      let newMessages: OpenAI.Chat.ChatCompletionMessageParam[] = [
         ...messages,
         { role: "user", content: message },
       ];
       setMessages(newMessages);
-      // Process messages and update messages state
-      const processMessagesResponse = await processMessages(newMessages);
-      if (!processMessagesResponse?.data) {
-        throw new Error(processMessagesResponse?.error);
-      }
-      setMessages(JSON.parse(processMessagesResponse.data));
+      // Process messages
+      newMessages = await processOpenAiMessages(newMessages);
+      setMessages(newMessages);
     } catch (error) {
       handleError(error, "Failed to send the message, try again later");
     } finally {
