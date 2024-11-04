@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { chainConfig } from "@/config/chain";
 import useError from "@/hooks/use-error";
 import { toast } from "@/hooks/use-toast";
 import { useWallets } from "@particle-network/connectkit";
@@ -16,7 +17,6 @@ import {
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { parseEther } from "viem";
-import { sepolia } from "viem/chains";
 
 export default function PlaygroundPage() {
   return (
@@ -57,8 +57,8 @@ function PlaygroundSendKlasterTransactionFeature() {
         value: parseEther("0.00001"),
       });
       const iTx = buildItx({
-        steps: [singleTx(sepolia.id, sendETH)],
-        feeTx: klaster.encodePaymentFee(sepolia.id, "ETH"),
+        steps: [singleTx(chainConfig.chain.id, sendETH)],
+        feeTx: klaster.encodePaymentFee(chainConfig.chain.id, "ETH"),
       });
       const quote = await klaster.getQuote(iTx);
       console.log({ quote });

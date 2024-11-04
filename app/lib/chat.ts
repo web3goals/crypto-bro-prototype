@@ -1,7 +1,8 @@
-import OpenAI from "openai";
-import { getOpenAiResponse } from "./actions";
-import { WalletClient } from "viem";
+import { chainConfig } from "@/config/chain";
 import { initKlaster, klasterNodeHost, loadBicoV2Account } from "klaster-sdk";
+import OpenAI from "openai";
+import { WalletClient } from "viem";
+import { getOpenAiResponse } from "./actions";
 import { errorToString } from "./converters";
 
 export async function processOpenAiMessages(
@@ -71,14 +72,14 @@ async function getWalletAddress(walletClient: WalletClient): Promise<string> {
       }),
       nodeUrl: klasterNodeHost.default,
     });
-    const address = klaster.account.uniqueAddresses.values().next().value;
+    const address = klaster.account.getAddress(chainConfig.chain.id);
     if (!address) {
       throw new Error("Klaster address not defined");
     }
-    return address;
+    return `${address} (${chainConfig.chain.name})`;
   } catch (error) {
     console.error("Failed to get wallet address: ", errorToString(error));
-    return "Failed to get wallet address, try again later";
+    return "Failed to get wallet address";
   }
 }
 
