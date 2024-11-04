@@ -1,9 +1,9 @@
 "use client";
 
+import { chainConfig } from "@/config/chain";
 import { siteConfig } from "@/config/site";
 import { ConnectKitProvider, createConfig } from "@particle-network/connectkit";
 import { authWalletConnectors } from "@particle-network/connectkit/auth";
-import { mainnet } from "@particle-network/connectkit/chains";
 import { evmWalletConnectors } from "@particle-network/connectkit/evm";
 import { EntryPosition, wallet } from "@particle-network/connectkit/wallet";
 import React from "react";
@@ -55,7 +55,7 @@ const config = createConfig({
       visible: true, // Dictates whether or not the wallet modal is included/visible or not
     }),
   ],
-  chains: [mainnet],
+  chains: [chainConfig.chain],
 });
 
 // Export ConnectKitProvider to be used within your index or layout file (or use createConfig directly within those files).
