@@ -19,7 +19,7 @@ export const OPEN_AI_TOOLS: OpenAI.Chat.ChatCompletionTool[] = [
   },
 ];
 
-export const OPEN_AI_PROMPT = [
+export const OPEN_AI_SYSTEM_PROMPT = [
   "You are an assistant who helps users with various tasks on blockchain.",
   "You support only the Ethereum Sepolia blockchain.",
   "You can get the user's wallet address and the user's wallet balance.",

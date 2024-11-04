@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import useError from "@/hooks/use-error";
 import { toast } from "@/hooks/use-toast";
 import { processOpenAiMessages } from "@/lib/chat";
-import { OPEN_AI_PROMPT } from "@/lib/openai";
+import { OPEN_AI_SYSTEM_PROMPT } from "@/lib/openai";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useWallets } from "@particle-network/connectkit";
@@ -35,7 +35,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<
     OpenAI.Chat.ChatCompletionMessageParam[]
   >([
-    { role: "system", content: OPEN_AI_PROMPT },
+    { role: "system", content: OPEN_AI_SYSTEM_PROMPT },
     { role: "assistant", content: "GM, crypto bro! What can I help with?" },
   ]);
 
