@@ -3,7 +3,7 @@ import { expect } from "chai";
 import hre from "hardhat";
 import { parseEther } from "viem";
 
-describe.only("CryptoBro", function () {
+describe("CryptoBro", function () {
   async function initFixture() {
     // Get signers
     const [deployer, userOne, userTwo] = await hre.viem.getWalletClients();
@@ -15,15 +15,25 @@ describe.only("CryptoBro", function () {
   it("Should deploy custom ERC20", async function () {
     const { userOne, cryptoBro } = await loadFixture(initFixture);
 
+    // Send transaction
     await expect(
-      cryptoBro.write.deployCustomErc20(
-        ["Test Token", "TT", parseEther("1000")],
-        { account: userOne.account.address }
-      )
+      cryptoBro.write.deployErc20(["Test Token", "TT", parseEther("1000")], {
+        account: userOne.account.address,
+      })
     ).to.be.not.rejected;
 
-    expect(
-      await cryptoBro.read.getDeployedCustomErc20List([userOne.account.address])
-    ).to.has.length(1);
+    // Check deployed erc20s
+    const deployedErc20s = await cryptoBro.read.getDeployedErc20s([
+      userOne.account.address,
+    ]);
+    expect(deployedErc20s).to.has.length(1);
+
+    // Check erc20 balance
+    const erc20 = await hre.viem.getContractAt(
+      "CustomErc20",
+      deployedErc20s[0]
+    );
+    const balance = await erc20.read.balanceOf([userOne.account.address]);
+    expect(balance).to.be.equal(parseEther("1000"));
   });
 });
