@@ -62,6 +62,10 @@ async function processOpenAiToolCalls(
       const { erc20_address } = JSON.parse(toolCall.function.arguments);
       toolResponse = await getWalletErc20Balance(erc20_address, walletClient);
     }
+    if (toolCall.function.name === "get_erc20_symbol") {
+      const { erc20_address } = JSON.parse(toolCall.function.arguments);
+      toolResponse = await getErc20Symbol(erc20_address);
+    }
     if (toolCall.function.name === "deploy_erc20_token") {
       const { token_name, token_symbol, token_initial_supply } = JSON.parse(
         toolCall.function.arguments
@@ -154,6 +158,24 @@ async function getWalletErc20Balance(
   } catch (error) {
     console.error("Failed to get wallet ERC20 balance: ", errorToString(error));
     return "Failed to get wallet ERC20 balance";
+  }
+}
+
+async function getErc20Symbol(erc20Address: string): Promise<string> {
+  try {
+    const client = createPublicClient({
+      chain: chainConfig.chain,
+      transport: http(chainConfig.chain.rpcUrls.default.http[0]),
+    });
+    const symbol = await client.readContract({
+      address: erc20Address as Address,
+      abi: erc20Abi,
+      functionName: "symbol",
+    });
+    return symbol;
+  } catch (error) {
+    console.error("Failed to get ERC20 symbol: ", errorToString(error));
+    return "Failed to get ERC20 symbol";
   }
 }
 
