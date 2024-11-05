@@ -8,6 +8,7 @@ import {
   encodeFunctionData,
   erc20Abi,
   http,
+  maxUint256,
   parseEther,
   WalletClient,
 } from "viem";
@@ -91,6 +92,26 @@ async function processOpenAiToolCalls(
         walletClient
       );
     }
+    if (toolCall.function.name === "exchange_erc20_tokens_for_usd_tokens") {
+      const { erc20_address, erc20_value } = JSON.parse(
+        toolCall.function.arguments
+      );
+      toolResponse = await exchangeErc20TokensForUsdTokens(
+        erc20_address,
+        erc20_value,
+        walletClient
+      );
+    }
+    if (
+      toolCall.function.name ===
+      "approve_erc20_tokens_transfer_for_crypto_bro_contract"
+    ) {
+      const { erc20_address } = JSON.parse(toolCall.function.arguments);
+      toolResponse = await approveErc20TokensTransferForCryptoBroContract(
+        erc20_address,
+        walletClient
+      );
+    }
     messages.push({
       role: "tool",
       content: toolResponse || "Not found tool for this function",
@@ -108,7 +129,7 @@ async function getWalletAddress(walletClient: WalletClient): Promise<string> {
     );
     return `${address} (${chainConfig.chain.name})`;
   } catch (error) {
-    console.error("Failed to get wallet address: ", errorToString(error));
+    console.error("Failed to get wallet address:", errorToString(error));
     return "Failed to get wallet address";
   }
 }
@@ -130,7 +151,7 @@ async function getWalletEthBalance(
     });
     return `${balance.toString()} ETH (${chainConfig.chain.name})`;
   } catch (error) {
-    console.error("Failed to get wallet ETH balance: ", errorToString(error));
+    console.error("Failed to get wallet ETH balance:", errorToString(error));
     return "Failed to get wallet ETH balance";
   }
 }
@@ -156,7 +177,7 @@ async function getWalletErc20Balance(
     });
     return `${balance.toString()} ERC20 (${chainConfig.chain.name})`;
   } catch (error) {
-    console.error("Failed to get wallet ERC20 balance: ", errorToString(error));
+    console.error("Failed to get wallet ERC20 balance:", errorToString(error));
     return "Failed to get wallet ERC20 balance";
   }
 }
@@ -174,7 +195,7 @@ async function getErc20Symbol(erc20Address: string): Promise<string> {
     });
     return symbol;
   } catch (error) {
-    console.error("Failed to get ERC20 symbol: ", errorToString(error));
+    console.error("Failed to get ERC20 symbol:", errorToString(error));
     return "Failed to get ERC20 symbol";
   }
 }
@@ -199,7 +220,7 @@ async function deployErc20Token(
     await executeKlasterRawTx(deployRawTx, walletClient, chainConfig.chain);
     return `ERC20 token deployed (${chainConfig.chain.name}), get the list of deployed token to see deployed smart contract address`;
   } catch (error) {
-    console.error("Failed to deploy ERC20 token: ", errorToString(error));
+    console.error("Failed to deploy ERC20 token:", errorToString(error));
     return "Failed to deploy ERC20 token";
   }
 }
@@ -226,10 +247,7 @@ async function getDeployedErc20Tokens(
       (token) => `- ${token} (${chainConfig.chain.name})`
     )}`;
   } catch (error) {
-    console.error(
-      "Failed to get deployed ERC20 tokens: ",
-      errorToString(error)
-    );
+    console.error("Failed to get deployed ERC20 tokens:", errorToString(error));
     return "Failed to get deployed ERC20 tokens";
   }
 }
@@ -254,7 +272,79 @@ async function transferErc20Tokens(
     await executeKlasterRawTx(transferRawTx, walletClient, chainConfig.chain);
     return `ERC20 tokens transfered`;
   } catch (error) {
-    console.error("Failed to transfer ERC20 tokens: ", errorToString(error));
+    console.error("Failed to transfer ERC20 tokens:", errorToString(error));
     return "Failed to transfer ERC20 tokens";
+  }
+}
+
+async function approveErc20TokensTransferForCryptoBroContract(
+  erc20Address: string,
+  walletClient: WalletClient
+): Promise<string> {
+  try {
+    const approveFunctionData = encodeFunctionData({
+      abi: erc20Abi,
+      functionName: "approve",
+      args: [chainConfig.contracts.cryptoBro, maxUint256],
+    });
+    const approveRawTx = rawTx({
+      gasLimit: 100_000n,
+      to: erc20Address as Address,
+      data: approveFunctionData,
+    });
+    await executeKlasterRawTx(approveRawTx, walletClient, chainConfig.chain);
+    return "ERC20 tokens transfer for CryptoBro contract approved";
+  } catch (error) {
+    console.error(
+      "Failed to approve ERC20 tokens transfer for CryptBro contract:",
+      errorToString(error)
+    );
+    return "Failed to approve ERC20 tokens transfer for CryptBro contract";
+  }
+}
+
+async function exchangeErc20TokensForUsdTokens(
+  erc20Address: string,
+  erc20Value: string,
+  walletClient: WalletClient
+): Promise<string> {
+  try {
+    // Check allowance
+    const client = createPublicClient({
+      chain: chainConfig.chain,
+      transport: http(chainConfig.chain.rpcUrls.default.http[0]),
+    });
+    const address = await getKlasterAccountAddress(
+      walletClient,
+      chainConfig.chain
+    );
+    const allowance = await client.readContract({
+      address: erc20Address as Address,
+      abi: erc20Abi,
+      functionName: "allowance",
+      args: [address, chainConfig.contracts.cryptoBro],
+    });
+    if (allowance < parseEther(erc20Value)) {
+      return "Failed to exchange ERC20 tokens for USD tokens, user must approve transfer their ERC20 tokens for CryptoBro contract using ERC20 tokens contracts before exchanging.";
+    }
+    // Send exchange transaction
+    const exchangeFunctionData = encodeFunctionData({
+      abi: cryptoBroAbi,
+      functionName: "exchangeErc20ForUsdTokens",
+      args: [erc20Address as Address, parseEther(erc20Value)],
+    });
+    const exchangeRawTx = rawTx({
+      gasLimit: 100_000n,
+      to: chainConfig.contracts.cryptoBro,
+      data: exchangeFunctionData,
+    });
+    await executeKlasterRawTx(exchangeRawTx, walletClient, chainConfig.chain);
+    return "ERC20 tokens exchanged for USD tokens (USDT)";
+  } catch (error) {
+    console.error(
+      "Failed to exchange ERC20 tokens for USD tokens:",
+      errorToString(error)
+    );
+    return "Failed to exchange ERC20 tokens for USD tokens";
   }
 }
