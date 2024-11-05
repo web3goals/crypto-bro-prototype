@@ -7,12 +7,13 @@ import {
   createPublicClient,
   encodeFunctionData,
   erc20Abi,
+  formatEther,
   http,
   maxUint256,
   parseEther,
   WalletClient,
 } from "viem";
-import { getOpenAiResponse } from "./actions";
+import { getOpenAiResponse, sendFaucetEth } from "./actions";
 import { errorToString } from "./converters";
 import { executeKlasterRawTx, getKlasterAccountAddress } from "./klaster";
 
@@ -62,6 +63,9 @@ async function processOpenAiToolCalls(
     if (toolCall.function.name === "get_wallet_erc20_balance") {
       const { erc20_address } = JSON.parse(toolCall.function.arguments);
       toolResponse = await getWalletErc20Balance(erc20_address, walletClient);
+    }
+    if (toolCall.function.name === "top_up_wallet_eth_balance") {
+      toolResponse = await topUpWalletEthBalance(walletClient);
     }
     if (toolCall.function.name === "get_erc20_symbol") {
       const { erc20_address } = JSON.parse(toolCall.function.arguments);
@@ -149,7 +153,7 @@ async function getWalletEthBalance(
     const balance = await client.getBalance({
       address: address,
     });
-    return `${balance.toString()} ETH (${chainConfig.chain.name})`;
+    return `${formatEther(balance)} ETH (${chainConfig.chain.name})`;
   } catch (error) {
     console.error("Failed to get wallet ETH balance:", errorToString(error));
     return "Failed to get wallet ETH balance";
@@ -175,10 +179,30 @@ async function getWalletErc20Balance(
       functionName: "balanceOf",
       args: [address],
     });
-    return `${balance.toString()} ERC20 (${chainConfig.chain.name})`;
+    return `${formatEther(balance)} ERC20 (${chainConfig.chain.name})`;
   } catch (error) {
     console.error("Failed to get wallet ERC20 balance:", errorToString(error));
     return "Failed to get wallet ERC20 balance";
+  }
+}
+
+async function topUpWalletEthBalance(
+  walletClient: WalletClient
+): Promise<string> {
+  try {
+    const address = await getKlasterAccountAddress(
+      walletClient,
+      chainConfig.chain
+    );
+    const sendEthResponse = await sendFaucetEth(address);
+    if (!sendEthResponse?.data) {
+      throw new Error(sendEthResponse?.error);
+    }
+    const { txValueEth } = JSON.parse(sendEthResponse.data);
+    return `Wallet ETH balance topped up by ${txValueEth} ETH`;
+  } catch (error) {
+    console.error("Failed to top up wallet ETH balance:", errorToString(error));
+    return "Failed to top up wallet ETH balance";
   }
 }
 

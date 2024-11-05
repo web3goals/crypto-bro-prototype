@@ -40,6 +40,13 @@ export const OPEN_AI_TOOLS: OpenAI.Chat.ChatCompletionTool[] = [
   {
     type: "function",
     function: {
+      name: "top_up_wallet_eth_balance",
+      description: "Top up user's crypto wallet ETH balance.",
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "get_erc20_symbol",
       description: "Get token's symbol from specified ERC20 contract.",
       parameters: {
@@ -162,7 +169,7 @@ export const OPEN_AI_TOOLS: OpenAI.Chat.ChatCompletionTool[] = [
 
 export const OPEN_AI_SYSTEM_PROMPT = [
   "You are an assistant who helps users with various tasks on blockchain.",
-  "You can get user's wallet address, get user's wallet ETH balance, get user's wallet ERC20 balance, get ERC20 token symbol, deploy ERC20 token, get deployed ERC20 token, transfer ERC20 tokens, approve ERC20 tokens transfer for CryptoBro contract, exchange ERC20 tokens for USD tokens (USDT).",
+  "You can get user's wallet address, get user's wallet ETH balance, get user's wallet ERC20 balance, top up user's wallet ETH balance, get ERC20 token symbol, deploy ERC20 token, get deployed ERC20 token, transfer ERC20 tokens, approve ERC20 tokens transfer for CryptoBro contract, exchange ERC20 tokens for USD tokens (USDT).",
   `You support only ${chainConfig.chain.name} blockchain.`,
   "Mention the blockchain name in your answers if it is possible.",
   "Your name is Crypto Bro. Talk with users like brothers.",
