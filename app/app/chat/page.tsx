@@ -19,6 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useWallets } from "@particle-network/connectkit";
 import { ClassValue } from "clsx";
 import {
+  BicepsFlexedIcon,
   Loader2Icon,
   MessagesSquareIcon,
   SendHorizonalIcon,
@@ -26,6 +27,7 @@ import {
 import OpenAI from "openai";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
+import ReactMarkdown from "react-markdown";
 import { z } from "zod";
 
 export default function ChatPage() {
@@ -160,14 +162,93 @@ function ChatMessages(props: {
   className?: ClassValue;
 }) {
   return (
-    <div className={cn("flex flex-col gap-2", props.className)}>
+    <div className={cn("flex flex-col items-start gap-3", props.className)}>
       {props.messages.toReversed().map((message, index) => (
-        <div key={index} className="bg-secondary rounded p-4">
-          <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
-            {JSON.stringify(message, null, 2)}
-          </pre>
-        </div>
+        <ChatMessageCard key={index} message={message} />
       ))}
     </div>
   );
+}
+
+function ChatMessageCard(props: {
+  message: OpenAI.Chat.ChatCompletionMessageParam;
+}) {
+  if (
+    props.message.role === "user" &&
+    typeof props.message.content === "string"
+  ) {
+    return (
+      <div className="border rounded-xl px-4 py-2">
+        <p className="text-sm">{props.message.content}</p>
+      </div>
+    );
+  }
+
+  if (
+    props.message.role === "assistant" &&
+    typeof props.message.content === "string"
+  ) {
+    return (
+      <div className="flex flex-row items-start gap-3 bg-secondary border rounded-xl px-4 py-4">
+        <div className="flex items-center justify-center size-8 rounded-full bg-primary">
+          <BicepsFlexedIcon className="size-4 text-primary-foreground" />
+        </div>
+        <div className="flex-1 flex flex-col justify-center min-h-8">
+          <ReactMarkdown
+            components={{
+              p: ({ children }) => {
+                return (
+                  <p className="text-sm [&:not(:first-child)]:mt-4">
+                    {children}
+                  </p>
+                );
+              },
+              a: ({ href, children }) => {
+                return (
+                  <a
+                    href={href}
+                    target="_blank"
+                    className="underline underline-offset-4"
+                  >
+                    {children}
+                  </a>
+                );
+              },
+              ul: ({ children }) => {
+                return (
+                  <ul className="text-sm [&:not(:first-child)]:mt-4">
+                    {children}
+                  </ul>
+                );
+              },
+              ol: ({ children }) => {
+                return (
+                  <ol className="text-sm [&:not(:first-child)]:mt-4">
+                    {children}
+                  </ol>
+                );
+              },
+              li: ({ children }) => {
+                return (
+                  <li className="[&:not(:first-child)]:mt-4">{children}</li>
+                );
+              },
+            }}
+          >
+            {props.message.content}
+          </ReactMarkdown>
+        </div>
+      </div>
+    );
+  }
+
+  return <></>;
+
+  // return (
+  //   <div className="bg-secondary rounded p-4">
+  //     <pre className="text-sm text-muted-foreground whitespace-pre-wrap">
+  //       {JSON.stringify(props.message, null, 2)}
+  //     </pre>
+  //   </div>
+  // );
 }
