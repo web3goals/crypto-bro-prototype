@@ -18,6 +18,7 @@ import {
 import { ArrowRightIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { encodeFunctionData, parseEther } from "viem";
+import { generatePrivateKey, privateKeyToAddress } from "viem/accounts";
 
 export default function PlaygroundPage() {
   return (
@@ -27,6 +28,7 @@ export default function PlaygroundPage() {
       <div className="flex flex-col items-start gap-4">
         <PlaygroundSendKlasterTransactionFeature />
         <PlaygroundDeployErc20TokenFeature />
+        <PlaygroundGenerateWalletFeature />
       </div>
     </main>
   );
@@ -188,6 +190,40 @@ function PlaygroundDeployErc20TokenFeature() {
         <ArrowRightIcon className="size-4" />
       )}{" "}
       Deploy ERC20 Token
+    </Button>
+  );
+}
+
+function PlaygroundGenerateWalletFeature() {
+  const { handleError } = useError();
+  const [isProsessing, setIsProsessing] = useState(false);
+
+  async function handleSendKlasterTransaction() {
+    try {
+      setIsProsessing(true);
+      const privateKey = generatePrivateKey();
+      const address = privateKeyToAddress(privateKey);
+      console.log({ privateKey, address });
+      toast({ title: "Success" });
+    } catch (error) {
+      handleError(error, "Failed, try again later");
+    } finally {
+      setIsProsessing(false);
+    }
+  }
+
+  return (
+    <Button
+      variant="outline"
+      disabled={isProsessing}
+      onClick={() => handleSendKlasterTransaction()}
+    >
+      {isProsessing ? (
+        <Loader2Icon className="size-4 animate-spin" />
+      ) : (
+        <ArrowRightIcon className="size-4" />
+      )}{" "}
+      Generate Wallet
     </Button>
   );
 }
