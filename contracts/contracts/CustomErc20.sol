@@ -7,13 +7,13 @@ contract CustomErc20 is ERC20 {
     constructor(
         string memory name,
         string memory symbol,
-        uint256 premint,
+        uint256 premintValue,
         address premintRecipient
     ) ERC20(name, symbol) {
-        _mint(premintRecipient, premint);
+        _mint(premintRecipient, premintValue);
     }
 
-    function mint(uint256 amount, address recipient) external {
-        _mint(recipient, amount);
+    function mint(uint256 value, address recipient) external {
+        _mint(recipient, value);
     }
 }
