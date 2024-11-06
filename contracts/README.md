@@ -10,3 +10,10 @@
 - Clean ignition deployment - `npx hardhat ignition wipe chain-1 USDTokenModule#USDToken`
 - Generate a file with flatten constract code - `npx hardhat flatten contracts/USDToken.sol > contracts/USDToken_flat.sol`
 - Run local node - `npx hardhat node`
+
+## Example of `.env`
+
+```
+PRIVATE_KEY=
+ETHERSCAN_API_KEY=
+```
