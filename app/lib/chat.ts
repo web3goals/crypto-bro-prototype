@@ -267,6 +267,9 @@ async function getDeployedErc20Tokens(
       functionName: "getDeployedErc20s",
       args: [address],
     });
+    if (deployedErc20Tokens.length === 0) {
+      return "User does not have deployed ERC20 contracts";
+    }
     return `Deployed ERC20 contracts: \n${deployedErc20Tokens.map(
       (token) => `- ${token} (${chainConfig.chain.name})`
     )}`;
