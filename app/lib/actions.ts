@@ -44,7 +44,7 @@ export async function sendFaucetEth(
       transport: http(chainConfig.chain.rpcUrls.default.http[0]),
       account: account,
     });
-    const txValueEth = "0.05";
+    const txValueEth = "0.01";
     const txHash = await client.sendTransaction({
       to: recipient,
       value: parseEther(txValueEth),
