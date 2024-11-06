@@ -45,7 +45,7 @@ export default function ChatPage() {
     try {
       setIsProsessing(true);
       // Check wallet client account
-      const walletClient = primaryWallet.getWalletClient();
+      const walletClient = primaryWallet?.getWalletClient();
       if (!walletClient) {
         toast({ title: "Please login to send messages" });
         return;

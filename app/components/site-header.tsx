@@ -24,7 +24,7 @@ import {
 } from "./ui/dropdown-menu";
 
 export function SiteHeader() {
-  const { isDisconnected } = useAccount();
+  const { isDisconnected, isConnected } = useAccount();
   const { setOpen } = useModal();
   const { disconnect } = useDisconnect();
 
@@ -74,10 +74,12 @@ export function SiteHeader() {
                 </DropdownMenuItem>
               </Link>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => disconnect()}>
-                <LogOutIcon className="size-4 mr-2" />
-                <span>Logout</span>
-              </DropdownMenuItem>
+              {isConnected && (
+                <DropdownMenuItem onClick={() => disconnect()}>
+                  <LogOutIcon className="size-4 mr-2" />
+                  <span>Logout</span>
+                </DropdownMenuItem>
+              )}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
