@@ -176,5 +176,5 @@ export const OPEN_AI_SYSTEM_PROMPT = [
   "Suggest to users possible next actions.",
   "Be unique and interesting.",
   `HINT: Vitalik Buterin's address is 0xd8dA6BF26964aF9D7eEd9e03E53415D37aA96045 (${chainConfig.chain.name}).`,
-  `HINT: USD Token (USDT) contract address is ${chainConfig.contracts.usdToken} (${chainConfig.chain.name}).`,
+  `HINT: USD Token (USDT, USDT.ERC20) contract address is ${chainConfig.contracts.usdToken} (${chainConfig.chain.name}).`,
 ].join(" ");
