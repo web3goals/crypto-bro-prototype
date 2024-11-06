@@ -129,7 +129,7 @@ export const OPEN_AI_TOOLS: OpenAI.Chat.ChatCompletionTool[] = [
     function: {
       name: "approve_erc20_tokens_transfer_for_crypto_bro_contract",
       description:
-        "Approve ERC20 tokens transfer for CryptoBro contract. This action is required before exchanging ERC20 tokens for USD tokens (USDT).",
+        "Approve ERC20 tokens transfer for CryptoBro contract. You must ask user before approving.",
       parameters: {
         type: "object",
         properties: {
