@@ -2,7 +2,7 @@
 
 # 💪 Crypto Bro
 
-AI assistant to which you can delegate any of your blockchain requests, from token creation to participating in DAO
+AI assistant to which you can delegate any of your blockchain requests, from token creation to participating in DAO.
 
 ## ✨ Features
 
@@ -14,7 +14,7 @@ AI assistant to which you can delegate any of your blockchain requests, from tok
 
 ## 🔗 Artifacts
 
-...
+- Application - [crypto-bro-super-app.vercel.app](https://crypto-bro-super-app.vercel.app/)
 
 ## 🏗️ Architecture
 
