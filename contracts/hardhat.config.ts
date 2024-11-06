@@ -20,9 +20,16 @@ const config: HardhatUserConfig = {
       url: "https://eth-sepolia.public.blastapi.io",
       accounts: [process.env.PRIVATE_KEY as string],
     },
+    arbitrumSepolia: {
+      url: process.env.ARBITRUM_RPC_URL,
+      accounts: [process.env.PRIVATE_KEY as string],
+    },
   },
   etherscan: {
-    apiKey: process.env.ETHERSCAN_API_KEY,
+    apiKey: {
+      sepolia: process.env.ETHERSCAN_API_KEY as string,
+      arbitrumSepolia: process.env.ARBITRUM_ETHERSCAN_API_KEY as string,
+    },
   },
 };
 

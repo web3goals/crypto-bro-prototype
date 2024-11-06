@@ -1,19 +1,19 @@
 import { Address, Chain } from "viem";
-import { sepolia } from "viem/chains";
+import { arbitrumSepolia } from "viem/chains";
 
 export type ChainConfig = typeof chainConfig;
 
 export const chainConfig = {
   chain: {
-    ...sepolia,
+    ...arbitrumSepolia,
     rpcUrls: {
       default: {
-        http: ["https://eth-sepolia.public.blastapi.io"],
+        http: [process.env.NEXT_PUBLIC_ARBITRUM_RPC_URL],
       },
     },
   } as Chain,
   contracts: {
-    usdToken: "0xfb07446c626b3d5e506f288d2fa112da8b7992b7" as Address,
-    cryptoBro: "0x389133be626aaf192d66765ff30bef724841c492" as Address,
+    usdToken: "0x1f2c31d5034f27a4352bc6ca0fc72cdc32809808" as Address,
+    cryptoBro: "0x57d1469c53bb259dc876a274add329eb703ab286" as Address,
   },
 };
