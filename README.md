@@ -19,7 +19,7 @@ AI assistant to which you can delegate any of your blockchain requests, from tok
 ## 🛠️ Technologies
 
 - Particle Connect is used as the Web2 and Web3 login layer to provide the best user experience for newbies.
-- Klaster is used as an account abstraction layer to provide a seamless user flow.
+- Klaster is used as an account abstraction layer to provide a seamless user flow for all operations from token creation to transfer and exchange.
 
 ## 🔗 Artifacts
 
